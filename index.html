@@ -1,12 +1,429 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>My Awesome GitHub Pages Site</title>
-    <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #a8b5a0;
+            margin: 0;
+            padding: 40px 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: white;
+            width: 100%;
+            max-width: 600px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 300;
+            letter-spacing: 2px;
+            margin: 0;
+            color: #333;
+            text-transform: lowercase;
+        }
+
+        .date-input {
+            border: none;
+            border-bottom: 1px solid #ccc;
+            padding: 5px 0;
+            font-size: 14px;
+            background: transparent;
+            outline: none;
+            width: 120px;
+        }
+
+        .section {
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #666;
+            margin-bottom: 10px;
+            background-color: #e8f0e4;
+            padding: 8px 12px;
+            border-radius: 3px;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .focus-section, .notes-section {
+            grid-column: span 1;
+        }
+
+        .todo-section {
+            grid-column: span 2;
+        }
+
+        .priorities-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .priorities-list li {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+
+        .priority-number {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            margin-right: 10px;
+            color: #666;
+        }
+
+        .priority-input {
+            border: none;
+            border-bottom: 1px solid #eee;
+            padding: 5px 0;
+            flex: 1;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .focus-input, .notes-textarea {
+            width: 100%;
+            border: none;
+            background-color: #e8f0e4;
+            padding: 15px;
+            border-radius: 3px;
+            outline: none;
+            resize: vertical;
+            font-family: inherit;
+            font-size: 14px;
+        }
+
+        .focus-input {
+            height: 60px;
+        }
+
+        .notes-textarea {
+            height: 120px;
+        }
+
+        .todo-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .todo-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .todo-checkbox {
+            width: 16px;
+            height: 16px;
+            border: 1px solid #ccc;
+            border-radius: 50%;
+            margin-right: 12px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .todo-checkbox.checked {
+            background-color: #a8b5a0;
+            border-color: #a8b5a0;
+        }
+
+        .todo-checkbox.checked::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .todo-input {
+            border: none;
+            border-bottom: 1px solid #eee;
+            padding: 5px 0;
+            flex: 1;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .todo-input.completed {
+            text-decoration: line-through;
+            color: #999;
+        }
+
+        .trackers {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .tracker {
+            text-align: center;
+        }
+
+        .tracker-icons {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .water-glass, .mood-icon {
+            width: 25px;
+            height: 25px;
+            border: 1px solid #ddd;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .water-glass {
+            border-radius: 3px;
+            position: relative;
+        }
+
+        .water-glass.filled {
+            background-color: #a8b5a0;
+            border-color: #a8b5a0;
+        }
+
+        .mood-icon {
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .mood-icon.selected {
+            background-color: #a8b5a0;
+            border-color: #a8b5a0;
+            color: white;
+        }
+
+        .add-todo-btn {
+            background: #a8b5a0;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-top: 10px;
+            transition: background-color 0.2s;
+        }
+
+        .add-todo-btn:hover {
+            background: #95a385;
+        }
+
+        @media (max-width: 768px) {
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+            
+            .todo-section {
+                grid-column: span 1;
+            }
+            
+            .trackers {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>Hello, GitHub Pages!</h1>
-    <p>This is my first functional site.</p>
-    <script src="script.js"></script>
+    <div class="container">
+        <div class="header">
+            <h1>To-do list</h1>
+            <input type="date" class="date-input" id="dateInput">
+        </div>
+
+        <div class="two-column">
+            <div class="focus-section">
+                <div class="section-title">FOCUS</div>
+                <textarea class="focus-input" placeholder="What's your main focus today?"></textarea>
+            </div>
+
+            <div class="section">
+                <div class="section-title">PRIORITIES</div>
+                <ul class="priorities-list">
+                    <li>
+                        <div class="priority-number">1</div>
+                        <input type="text" class="priority-input" placeholder="Most important task">
+                    </li>
+                    <li>
+                        <div class="priority-number">2</div>
+                        <input type="text" class="priority-input" placeholder="Second priority">
+                    </li>
+                    <li>
+                        <div class="priority-number">3</div>
+                        <input type="text" class="priority-input" placeholder="Third priority">
+                    </li>
+                    <li>
+                        <div class="priority-number">4</div>
+                        <input type="text" class="priority-input" placeholder="Fourth priority">
+                    </li>
+                </ul>
+            </div>
+
+            <div class="notes-section">
+                <div class="section-title">NOTES</div>
+                <textarea class="notes-textarea" placeholder="Jot down any notes, ideas, or reminders..."></textarea>
+            </div>
+
+            <div class="todo-section">
+                <div class="section-title">TO DO</div>
+                <ul class="todo-list" id="todoList">
+                    <li class="todo-item">
+                        <div class="todo-checkbox" onclick="toggleTodo(this)"></div>
+                        <input type="text" class="todo-input" placeholder="Add a task...">
+                    </li>
+                </ul>
+                <button class="add-todo-btn" onclick="addTodoItem()">+ Add Task</button>
+            </div>
+        </div>
+
+        <div class="trackers">
+            <div class="tracker">
+                <div class="section-title">WATER TRACKER</div>
+                <div class="tracker-icons" id="waterTracker">
+                    <div class="water-glass" onclick="toggleWater(this)"></div>
+                    <div class="water-glass" onclick="toggleWater(this)"></div>
+                    <div class="water-glass" onclick="toggleWater(this)"></div>
+                    <div class="water-glass" onclick="toggleWater(this)"></div>
+                    <div class="water-glass" onclick="toggleWater(this)"></div>
+                    <div class="water-glass" onclick="toggleWater(this)"></div>
+                    <div class="water-glass" onclick="toggleWater(this)"></div>
+                    <div class="water-glass" onclick="toggleWater(this)"></div>
+                </div>
+            </div>
+
+            <div class="tracker">
+                <div class="section-title">MOOD TRACKER</div>
+                <div class="tracker-icons" id="moodTracker">
+                    <div class="mood-icon" onclick="selectMood(this)" data-mood="excited">😄</div>
+                    <div class="mood-icon" onclick="selectMood(this)" data-mood="happy">😊</div>
+                    <div class="mood-icon" onclick="selectMood(this)" data-mood="neutral">😐</div>
+                    <div class="mood-icon" onclick="selectMood(this)" data-mood="tired">😴</div>
+                    <div class="mood-icon" onclick="selectMood(this)" data-mood="sad">😔</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Set today's date
+        document.getElementById('dateInput').valueAsDate = new Date();
+
+        // Todo functionality
+        function toggleTodo(checkbox) {
+            checkbox.classList.toggle('checked');
+            const input = checkbox.nextElementSibling;
+            input.classList.toggle('completed');
+        }
+
+        function addTodoItem() {
+            const todoList = document.getElementById('todoList');
+            const newItem = document.createElement('li');
+            newItem.className = 'todo-item';
+            newItem.innerHTML = `
+                <div class="todo-checkbox" onclick="toggleTodo(this)"></div>
+                <input type="text" class="todo-input" placeholder="Add a task...">
+            `;
+            todoList.appendChild(newItem);
+        }
+
+        // Water tracker functionality
+        function toggleWater(glass) {
+            glass.classList.toggle('filled');
+        }
+
+        // Mood tracker functionality
+        function selectMood(moodIcon) {
+            // Remove selected class from all mood icons
+            const allMoods = document.querySelectorAll('.mood-icon');
+            allMoods.forEach(mood => mood.classList.remove('selected'));
+            
+            // Add selected class to clicked mood
+            moodIcon.classList.add('selected');
+        }
+
+        // Auto-save functionality (stores in memory during session)
+        let appData = {
+            focus: '',
+            priorities: ['', '', '', ''],
+            notes: '',
+            todos: [],
+            water: 0,
+            mood: null
+        };
+
+        // Save data when inputs change
+        document.addEventListener('input', function(e) {
+            if (e.target.classList.contains('focus-input')) {
+                appData.focus = e.target.value;
+            } else if (e.target.classList.contains('notes-textarea')) {
+                appData.notes = e.target.value;
+            } else if (e.target.classList.contains('priority-input')) {
+                const index = Array.from(document.querySelectorAll('.priority-input')).indexOf(e.target);
+                appData.priorities[index] = e.target.value;
+            } else if (e.target.classList.contains('todo-input')) {
+                const todoInputs = document.querySelectorAll('.todo-input');
+                appData.todos = Array.from(todoInputs).map(input => input.value);
+            }
+        });
+
+        // Enter key adds new todo item when in todo input
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && e.target.classList.contains('todo-input') && e.target.value.trim()) {
+                addTodoItem();
+                // Focus on the new input
+                setTimeout(() => {
+                    const inputs = document.querySelectorAll('.todo-input');
+                    inputs[inputs.length - 1].focus();
+                }, 100);
+            }
+        });
+    </script>
 </body>
 </html>
